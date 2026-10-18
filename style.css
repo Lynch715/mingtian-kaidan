@@ -25,3 +25,60 @@ body{background:#e7e1d5;background-image:radial-gradient(#857c6a14 .6px,transpar
 .receipt-title{writing-mode:initial;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:8px;max-height:none;letter-spacing:2px}.receipt-title b{writing-mode:vertical-rl;font:17px/1.3 var(--serif);font-weight:400;letter-spacing:3px}.receipt-title span{writing-mode:vertical-rl;font-size:9px;letter-spacing:2px}
 @media(max-width:760px){.desk-object{font-size:12px}.schedule-actions .action-info p{font-size:12px}.schedule-actions .action-info strong{font-size:14px}.schedule-actions .action-meta{font-size:10px}.schedule-actions .action-card{min-height:116px}.receipt-value small{font-size:10px}.receipt-value>span{font-size:10px}.receipt-state span{font-size:10px}.receipt-state{grid-template-columns:46px 1fr 46px 1fr}.receipt-title{padding-left:8px;gap:5px}.receipt-title b{font-size:15px;letter-spacing:2px}.receipt-title span{font-size:8px;letter-spacing:1px}.scene-bottom{font-size:9px}.story-text,.story-text.result{font-size:15px}.fact{font-size:13px}.client-action strong{font-size:13px}.client-action small{font-size:11px}.contact-card .role,.contact-card .pill{font-size:11px}.product p{font-size:12px}.product .fineprint{font-size:11px}.proposal p{font-size:12px}.proposal .match{font-size:11px}.contact-card .row.between{align-items:flex-start}.contact-card .row.between>.pill{white-space:normal;max-width:98px;line-height:1.6;text-align:center}.notice{font-size:13px}.choice{font-size:14px}.note-on-desk p{font-size:13px}}
 @media(max-width:365px){.desk-object{font-size:11px}.schedule-actions .action-info strong{font-size:13px}.receipt-value small,.receipt-value>span{font-size:9px}.receipt-state span{font-size:9px}.receipt-state{grid-template-columns:42px 1fr 42px 1fr}.contact-card .pill{font-size:10px;max-width:83px!important}.contact-card .row{gap:9px}}
+ .welcome-short-copy{display:none}
+/* 手机入职封面：左侧书名、右侧营业部照片，下方并排身份卡。 */
+@media (max-width:760px){
+ .welcome{min-height:100svh;background:#f3efe4;padding:0 0 env(safe-area-inset-bottom)}
+ .welcome-art{height:auto;min-height:0;padding:23px 22px 20px;display:block;background:none;color:#3e4e48;overflow:hidden}
+ .welcome-art:before{inset:52px 23px auto auto;width:119px;height:145px;background:url('assets/office.jpg') 67% 58%/cover;border:6px solid #fffaf0;border-bottom-width:20px;transform:rotate(6deg);box-shadow:2px 5px 12px #6a56352b;z-index:0}
+ .welcome-art:after{content:'南桥 · 第一日';position:absolute;right:32px;top:185px;transform:rotate(6deg);font:10px var(--serif);letter-spacing:2px;color:#9b8a6e;pointer-events:none}
+ .welcome-art>.row{gap:9px;position:relative;z-index:1}
+ .welcome-art>.row .stamp{color:#a85f44!important;width:27px;height:29px;font-size:19px;border-radius:0}
+ .welcome-art>.row .eyebrow{font-size:9px;letter-spacing:1.5px;color:#99886e}
+ .welcome-title{margin:18px 0 0;z-index:1;max-width:calc(100% - 125px)}
+ .welcome-title .mark{display:block;border:0;padding:0;margin:0 0 7px;color:#9b8265;font-size:9px;line-height:1.4;letter-spacing:2px}
+ .welcome-title h1{font-size:36px;line-height:1.35;letter-spacing:2px;color:#3e4d46;font-weight:500;white-space:nowrap}
+ .welcome-title p{font-size:11px;line-height:1.85;margin:13px 0 0;max-width:none;color:#8c806c;white-space:nowrap}
+ .welcome-title p br{display:none}
+ .welcome-title p{font:12px/1.9 var(--serif);letter-spacing:1px}
+ .welcome-long-copy{display:none}
+ .welcome-short-copy{display:inline}
+ .welcome-paper{margin:0 15px;padding:21px 17px 16px;border-top:1px solid #d3c8b4;background:#faf7ed;box-shadow:0 2px 7px #6758400d;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 11px;position:relative}
+ .welcome-paper:before{content:'';width:62px;height:13px;background:#d8caae75;position:absolute;left:calc(50% - 31px);top:-7px;transform:rotate(-3deg);border-inline:1px dashed #c8bda5}
+ .welcome-paper>.eyebrow,.welcome-paper>h2,.welcome-copy,.continue-card,.welcome-paper>.start-btn,.welcome-links,.welcome-note,.welcome-paper>.notice{grid-column:1/-1}
+ .welcome-paper>.eyebrow{font-size:9px;letter-spacing:2px;color:#a18d70}
+ .welcome-paper h2{font-size:25px;margin:5px 0 7px;color:#534f42}
+ .welcome-copy{font-size:12px;line-height:1.85;margin-bottom:16px;color:#8b806c}
+ .welcome-paper .origin{margin:0 0 15px;padding:15px 12px 12px;min-width:0;display:flex;flex-direction:column;background:#f7f2e5;border:1px solid #ddd1bb;border-radius:2px;align-self:stretch}
+ .welcome-paper .origin strong{font-size:17px;line-height:1.65;margin:0 0 9px;max-width:calc(100% - 10px);letter-spacing:.5px;color:#625d4c;min-height:56px}
+ .welcome-paper .origin p{font-size:12px;line-height:1.85;max-width:none;color:#8a806c;margin:0 0 13px;flex:1}
+ .welcome-paper .origin .origin-meta{margin:0;padding-top:10px;border-top:1px dashed #d5c8ad;display:grid;gap:3px;font-size:10px;line-height:1.7;color:#9b8a6c}
+ .welcome-paper .origin.selected{background:#e8ebdf;border:1px solid #718273;box-shadow:inset 0 3px #718273}
+ .welcome-paper .origin.selected strong{color:#3f5649}
+ .welcome-paper .origin.selected:after{right:8px;top:9px;width:17px;height:17px;line-height:17px;font-size:10px;background:#718273}
+ .welcome-paper .start-btn{margin:0;min-height:49px;border:0;background:#665944;color:#fff8e9;font-size:14px;letter-spacing:1px}
+ .welcome-links{margin:7px 0 0;gap:28px}
+ .welcome-links .text-btn{font-size:12px;min-height:42px;color:#8b7c62}
+ .welcome-note{font-size:10px;line-height:1.8;margin:5px 0 0;color:#a59984}
+ .continue-card{margin:8px 0 17px;padding:14px;background:#e8ecdf}
+ .continue-card p{font-size:12px;margin-bottom:10px}
+}
+@media (max-width:365px){
+ .welcome-art{padding:19px 18px 18px}
+ .welcome-art:before{right:20px;top:48px;width:96px;height:126px;border-width:5px;border-bottom-width:18px}
+ .welcome-art:after{right:25px;top:163px;font-size:8px;letter-spacing:1px}
+ .welcome-art>.row .eyebrow{font-size:8px;letter-spacing:1px}
+ .welcome-title{margin-top:16px;max-width:calc(100% - 104px)}
+ .welcome-title h1{font-size:31px;letter-spacing:1px}
+ .welcome-title p{margin-top:10px}
+ .welcome-title p{font-size:11px;letter-spacing:.5px}
+ .welcome-paper{margin:0 11px;padding:18px 13px 14px;column-gap:9px}
+ .welcome-paper h2{font-size:23px}
+ .welcome-copy{font-size:11px;margin-bottom:13px}
+ .welcome-paper .origin{padding:12px 10px 10px}
+ .welcome-paper .origin strong{font-size:15px;line-height:1.65;letter-spacing:0;min-height:50px;margin-bottom:7px}
+ .welcome-paper .origin p{font-size:11px;line-height:1.8;margin-bottom:11px}
+ .welcome-paper .origin .origin-meta{font-size:9px;padding-top:9px}
+ .welcome-paper .origin.selected:after{right:6px;top:8px;width:15px;height:15px;line-height:15px;font-size:9px}
+ .welcome-note{font-size:9px}
+}
