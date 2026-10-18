@@ -163,3 +163,81 @@ body{background:#e7e1d5;background-image:radial-gradient(#857c6a14 .6px,transpar
  .pocket-end{margin-top:8px}
  .pocket-details{margin-top:8px}
 }
+
+/* 手机阅读：放大说明和数值，用更紧的留白换空间，不截断文字。 */
+@media(max-width:760px){
+ .pocket-day{padding:8px 12px;margin-bottom:8px}
+ .pocket-day>div>span{font-size:13px;line-height:1.4}
+ .pocket-day h2{font-size:18px;line-height:1.35}
+ .pocket-time strong{font-size:14px;line-height:1.4}
+ .pocket-time .time-pips{margin-top:5px}
+ .pocket-status{padding:8px 12px;gap:5px 12px}
+ .pocket-status>div>span,.pocket-status small{font-size:13px;line-height:1.4}
+ .pocket-status>div>strong{font-size:28px;line-height:1.15}
+ .pocket-status .pocket-vitals{padding-top:7px;gap:6px}
+ .pocket-status .pocket-vitals span{font-size:13px;white-space:nowrap}
+ .pocket-vitals b{font-size:14px;font-variant-numeric:tabular-nums}
+ .pocket-reminder,.pocket-reminder button{font-size:13px;line-height:1.4}
+ .pocket-reminder button{min-height:34px}
+ .pocket-actions{gap:7px}
+ .pocket-action{padding:8px 10px;min-height:84px}
+ .pocket-action-title{gap:6px}
+ .pocket-action-title strong{font-size:17px;line-height:1.35}
+ .pocket-cost,.pocket-action small{font-size:13px;line-height:1.4}
+ .pocket-cost{margin-top:2px}.pocket-action small{margin-top:2px}
+ .pocket-end{margin-top:9px}
+ .pocket-end .btn{font-size:16px}
+ .pocket-end p{font-size:12px;line-height:1.4;margin-top:4px}
+ .pocket-details{margin-top:9px}
+ .pocket-details summary{font-size:13px;gap:8px}
+ .pocket-details summary span,.pocket-details[open] summary span:after{font-size:12px}
+ .pocket-details[open] summary span{font-size:0}
+ .pocket-details-body{font-size:14px;line-height:1.65}
+ .mobile-nav button{font-size:12px;line-height:1.4}
+ .page-heading p,.inline-note,.rules,.metric-line,.ledger,.help-text p{font-size:14px;line-height:1.65}
+ .page-heading .eyebrow,.page-heading .pill,.filter-row button{font-size:12px}
+ .contact-card .role,.contact-card .pill,.contact-bottom{font-size:12px}
+ .contact-card .quote{font-size:14px;line-height:1.7}
+ .contact-bottom{flex-wrap:wrap;gap:5px 8px}
+ .contact-card .row.between>.pill{max-width:110px!important}
+ .product p,.product .fineprint,.proposal p,.proposal .match,.coworker p{font-size:13px;line-height:1.65}
+ .product .price span,.product .product-type,.product .pill{font-size:12px}
+ .product .row.between{flex-wrap:wrap;gap:6px}
+ .product .price{white-space:nowrap}
+ .conversation-list .con-name,.message-date,.bubble-foot{font-size:12px}
+ .bubble{font-size:15px;line-height:1.75}
+ .client-action strong{font-size:15px}.client-action small{font-size:13px;line-height:1.5}
+ .fact,.journal-entry p,.night-entries div{font-size:14px;line-height:1.7}
+ .journal-entry small,.effect-note,.change-chip,.modal-top .eyebrow{font-size:12px}
+ .event-header .role{font-size:13px}
+ .story-text,.story-text.result{font-size:16px;line-height:1.85}
+ .choice,.modal-actions .btn,.storage-buttons .btn{font-size:14px}
+ .welcome-copy,.welcome-paper .origin p,.continue-card p{font-size:14px;line-height:1.65}
+ .welcome-paper .origin .origin-meta{font-size:12px;line-height:1.5;gap:2px;padding-top:7px}
+ .welcome-paper .origin{padding:12px 10px 10px}
+ .welcome-paper .origin strong{font-size:17px;line-height:1.5;margin-bottom:7px;min-height:51px;max-width:calc(100% - 20px)}
+ .welcome-paper .origin p{margin-bottom:9px}
+ .welcome-links .text-btn,.welcome-note{font-size:12px;line-height:1.5}
+ .welcome-paper>.eyebrow{font-size:11px}
+ .welcome-title .mark,.welcome-art>.row .eyebrow{font-size:11px;letter-spacing:1px}
+}
+@media(max-width:365px){
+ .pocket-day{gap:8px;padding-inline:10px}
+ .pocket-day h2{font-size:17px}
+ .pocket-status{padding-inline:10px}
+ .pocket-status .pocket-vitals{gap:4px}
+ .pocket-action{padding-inline:8px}
+ .pocket-action-title strong{font-size:16px}
+ .pocket-action-title{gap:5px}
+ .welcome-paper{column-gap:8px;padding-inline:10px}
+ .welcome-paper .origin{padding-inline:8px}
+}
+@media(max-width:760px) and (max-height:740px){
+ .pocket-day{padding-block:5px;margin-bottom:6px}
+ .pocket-status{padding-block:6px}
+ .pocket-status .pocket-vitals{padding-top:5px}
+ .pocket-reminder button{min-height:30px}
+ .pocket-actions{gap:6px}
+ .pocket-action{padding-block:6px;min-height:78px}
+ .pocket-end{margin-top:7px}
+}
