@@ -1,3 +1,4 @@
+import {freshExtra,extraEventById,extraStoryFor,nextExtraEvent,resolveExtra} from './content.js?v=content-round-1';
 import {PRODUCTS,PEOPLE,CLIENT_SEEDS,LEADS,DAYS,SIDE_EVENTS,REFUSALS} from './data.js';
 export const VERSION=1;
 export const TARGET=10000;
@@ -19,11 +20,11 @@ export function random(s){s.seed=(Math.imul(1664525,s.seed)+1013904223)>>>0;retu
 function makeClient(c,day=1){return {...c,trust:c.trust??25,known:0,stage:'new',met:0,lastContact:0,offerDay:0,unlocked:day,notes:[],served:0};}
 export function newGame(origin='career',seed=Date.now()>>>0){
  if(!['career','graduate'].includes(origin))throw Error('请选择一种开局身份。');
- return {version:VERSION,origin,seed:seed>>>0,day:1,phase:'day',ap:6,cash:origin==='career'?4200:2800,energy:88,mood:74,skill:origin==='career'?18:12,integrity:85,regard:35,community:0,work:0,calls:0,visits:0,earned:0,spent:0,premium:0,selfPremium:0,renewal:0,daily:{},bonds:Object.fromEntries(Object.keys(PEOPLE).map(k=>[k,['aunt','friend'].includes(k)?70:45])),clients:CLIENT_SEEDS.map(c=>makeClient(c)),policies:[],ledger:[],journal:[],messages:[{day:1,person:'lin',text:'我坐你旁边。茶水间在走廊尽头，那个白色开关别碰，按了会漏水。'}],seen:[],flags:[],pending:'d1',lastResult:null,night:null,ending:null};
+ return {version:VERSION,origin,seed:seed>>>0,day:1,phase:'day',ap:6,cash:origin==='career'?4200:2800,energy:88,mood:74,skill:origin==='career'?18:12,integrity:85,regard:35,community:0,work:0,calls:0,visits:0,earned:0,spent:0,premium:0,selfPremium:0,renewal:0,daily:{},bonds:Object.fromEntries(Object.keys(PEOPLE).map(k=>[k,['aunt','friend'].includes(k)?70:45])),clients:CLIENT_SEEDS.map(c=>makeClient(c)),policies:[],ledger:[],journal:[],messages:[{day:1,person:'lin',text:'我坐你旁边。茶水间在走廊尽头，那个白色开关别碰，按了会漏水。'}],seen:[],flags:[],pending:'d1',lastResult:null,night:null,ending:null,extra:freshExtra()};
 }
-export function eventById(id){return [...DAYS,...SIDE_EVENTS].find(x=>x.id===id);}
+export function eventById(id){return [...DAYS,...SIDE_EVENTS].find(x=>x.id===id)??extraEventById(id);}
 export function storyFor(s){
- const original=eventById(s.pending);if(!original)return null;const e=copy(original);
+ const original=eventById(s.pending);if(!original)return null;const e=extraEventById(original.id)?extraStoryFor(s,original):copy(original);
  const has=id=>s.policies.some(p=>p.client===id&&p.status!=='cancelled');
  if(e.id==='d4'&&has('friend')){e.body='许嘉发来一张面馆的照片，说老板又涨了一块钱。聊了几句，他提起甲方还没结款。\n他已经向你买过一份保障，你想着要不要再介绍主管最近推的长期储蓄方案。';}
  if(e.id==='d9'&&has('aunt')){e.body='陈姨让你去拿汤，顺手把桌上的存折收进抽屉。她已经向你买过一份保险，今天却没提工作的事。\n你坐在她家熟悉的旧沙发上，发现她又把家里的开支记在旧台历背面。';e.choices[1]={label:'问她上次那份缴费会不会吃力',effect:{bond:{aunt:5},reveal:'aunt',integrity:2},text:'她说暂时还能安排，但不想再添支出了。你让她有困难就直说，别为了照顾你硬撑。'};}
@@ -60,7 +61,10 @@ export function chooseEvent(s,index){
  if(ev.id==='d20')text+=s.premium>=5000?' 你的业绩已经有起色，这批线索里仍给你留了一个位置。':' 你知道，眼下更得靠自己慢慢找。';
  if(ev.id==='d18'&&s.policies.some(p=>p.client==='aunt'&&p.status!=='cancelled'))text+=' 陈姨已经买过的那份保单，也需要你认真回访。';
  if(ev.id==='d10'&&s.flags.includes('overpromise'))message(s,'zhou','你报的预计金额我记下了，后面有变动及时告诉我。');
- outcome(s,before,ev.title,text);message(s,ev.person,choice.text);return s.lastResult;
+ const source=resolveExtra(s,ev.id,index);
+ if(source){const lead=unlockLead(s,source);text+=lead?` ${lead.name}的咨询已经记进客户本，之后可以找个方便的时间联系。`:' 目前的咨询线索都已记在客户本里，先把已有联系认真跟好。';}
+ if(extraEventById(ev.id)){const client=s.clients.find(p=>p.id===ev.person);if(client)client.notes.unshift({day:s.day,text:ev.title+'：'+text});}
+ outcome(s,before,ev.title,text);message(s,ev.person,extraEventById(ev.id)?text:choice.text);return s.lastResult;
 }
 function canAct(s){if(s.phase!=='day'||s.pending||s.lastResult)throw Error('先处理完眼前的事。');}
 export function actionReason(s,type,id){
@@ -144,7 +148,7 @@ export function buySelf(s,productId){
  s.premium+=product.premium;s.selfPremium+=product.premium;if(['illness','saving'].includes(product.id))s.renewal+=product.premium;
  s.regard=clamp(s.regard+6);s.mood=clamp(s.mood-3);return outcome(s,before,'给自己买了一份',`你支付了 ¥${product.premium}，选择「${product.name}」。预计佣金 ¥${commission}，三天后确认。${s.renewal?'这项长期安排还会带来每年 ¥'+s.renewal+' 的后续缴费负担。':'这是一年期安排，明年是否继续，需要重新考虑。'}\n它会计入本月业绩，但今天花掉的钱已经从自己的账户扣除了。`);
 }
-export function acknowledge(s){s.lastResult=null;}
+export function acknowledge(s){s.lastResult=null;const extra=nextExtraEvent(s);if(extra)s.pending=extra;}
 export function endDay(s){
  canAct(s);const before=snapshot(s);const day=s.day;const entries=[];
  money(s,-45,'日常餐饮与交通');entries.push('餐饮与交通 −¥45');
@@ -190,6 +194,11 @@ export function importSave(raw){
  let data;try{data=JSON.parse(raw);}catch{throw Error('文件不是有效的 JSON 存档。');}
  const s=data?.state;const fail=()=>{throw Error('存档内容不完整或版本不兼容，现有进度没有改变。');};
  if(data?.game!=='明天一定开单'||data.version!==VERSION||!s||s.version!==VERSION)fail();
+ // v1 原存档只补充新增内容记录，不重算任何历史奖励或已完成剧情。
+ if(!('extra' in s)){
+  s.extra=freshExtra();
+  for(const [id,flag,day]of [['d2','listedFamily',2],['d10','overpromise',10]])if(Array.isArray(s.seen)&&s.seen.includes(id))s.extra.decisions[id]={choice:Array.isArray(s.flags)&&s.flags.includes(flag)?1:0,day};
+ }
  const base=newGame();for(const k of Object.keys(base))if(!(k in s))fail();
  if(!['career','graduate'].includes(s.origin)||!['day','night','ended'].includes(s.phase))fail();
  const bounded=(n,min,max)=>Number.isFinite(n)&&n>=min&&n<=max;
@@ -209,6 +218,20 @@ export function importSave(raw){
  for(const entry of s.journal)if(!entry||!text(entry.title,100)||!text(entry.text)||!bounded(entry.day,1,30))fail();
  for(const entry of s.messages)if(!entry||!text(entry.person,30)||!text(entry.text)||!bounded(entry.day,1,30))fail();
  for(const entry of s.ledger)if(!entry||!text(entry.label,100)||!bounded(entry.amount,-1e7,1e7)||!bounded(entry.day,1,30))fail();
+ const extra=s.extra;if(!extra||typeof extra!=='object'||Array.isArray(extra)||!extra.decisions||typeof extra.decisions!=='object'||Array.isArray(extra.decisions)||!('claim' in extra))fail();
+ for(const [id,d]of Object.entries(extra.decisions))if(!['d2','d10','d21'].includes(id)&&!extraEventById(id)||!d||!Number.isInteger(d.choice)||![0,1].includes(d.choice)||!Number.isInteger(d.day)||!bounded(d.day,1,s.day)||!s.seen.includes(id))fail();
+ for(const id of s.seen.filter(id=>extraEventById(id)))if(!extra.decisions[id])fail();
+ const claim=extra.claim;
+ if(claim!==null){
+  const policy=s.policies.find(p=>p.id===claim.policyId);
+  if(typeof claim!=='object'||!policy||policy.client!=='wu'||policy.product!=='accident'||!['materials','supplement','review','closed'].includes(claim.stage)||!Number.isInteger(claim.due)||!bounded(claim.due,1,35)||!s.seen.includes('x-claim-report'))fail();
+  const resolved=id=>s.seen.includes(id);
+  const expected=resolved('x-claim-result')?'closed':resolved('x-claim-supplement')?'review':resolved('x-claim-materials')?(extra.decisions['x-claim-materials'].choice===0?'review':'supplement'):'materials';
+  const prior=expected==='closed'?'x-claim-result':expected==='materials'?'x-claim-report':expected==='supplement'?'x-claim-materials':resolved('x-claim-supplement')?'x-claim-supplement':'x-claim-materials';
+  const due=extra.decisions[prior]?.day+(expected==='closed'?0:expected==='supplement'?1:2);
+  if(claim.due!==due||claim.stage!==expected||resolved('x-claim-result')&&!resolved('x-claim-materials')||resolved('x-claim-supplement')&&(!resolved('x-claim-materials')||extra.decisions['x-claim-materials'].choice!==1))fail();
+ }else if(s.seen.some(id=>id.startsWith('x-claim-')))fail();
+ if(typeof s.pending==='string'&&s.pending.startsWith('x-')&&(s.lastResult||nextExtraEvent({...s,pending:null})!==s.pending))fail();
  if(s.seen.some(x=>!eventById(x))||new Set(s.seen).size!==s.seen.length||s.flags.some(x=>!text(x,60)))fail();
  if(s.pending&&(!eventById(s.pending)||s.seen.includes(s.pending)))fail();
  const changes=v=>Array.isArray(v)&&v.every(x=>x&&['cash','energy','mood','skill','integrity','regard','premium'].includes(x.key)&&bounded(x.delta,-1e7,1e7));
