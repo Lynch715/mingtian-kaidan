@@ -1,1 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#263f66"/><path d="M18 15h28v37l-7-4-7 4-7-4-7 4z" fill="none" stroke="#ffa489" stroke-width="3"/><path d="M25 27h14m-14 9h10" stroke="#ffa489" stroke-width="3"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">明天一定开单：纸页与确认勾</title>
+  <rect width="512" height="512" rx="112" fill="#263f66"/>
+  <path d="M144 88h160l64 64v248a24 24 0 0 1-24 24H144a24 24 0 0 1-24-24V112a24 24 0 0 1 24-24Z" fill="#f5f7fb"/>
+  <path d="M304 88v48a16 16 0 0 0 16 16h48" fill="#b7c7df"/>
+  <path d="M168 198h112M168 244h72" fill="none" stroke="#6b86ad" stroke-width="20" stroke-linecap="round"/>
+  <circle cx="326" cy="338" r="78" fill="#ef9275" stroke="#263f66" stroke-width="14"/>
+  <path d="m291 338 24 24 46-51" fill="none" stroke="#263f66" stroke-width="19" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
