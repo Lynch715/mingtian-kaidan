@@ -375,3 +375,13 @@ html,body{touch-action:pan-x pan-y}
  .client-badges{margin:0}
  .offer-action-dock{max-height:48%;padding:6px 10px}
 }
+
+/* 沿用工位记录显示普通操作，关键成交与剧情仍保留完整结果。 */
+.action-receipt{margin:10px 0 14px;border:1px solid var(--line);border-radius:8px;background:var(--soft);font-size:13px;line-height:1.65;overflow-wrap:anywhere}
+.action-receipt summary{padding:10px 12px;cursor:pointer}
+.action-receipt summary strong,.action-receipt summary span{display:block}
+.action-receipt summary strong{color:var(--ink);font-size:13px}
+.action-receipt summary span{color:var(--muted);margin-top:3px}
+.action-receipt>div{padding:0 12px 10px}.action-receipt p{margin:7px 0;white-space:pre-line}.action-receipt .change-chips{margin:9px 0 0}
+.milestone-note{display:flex;align-items:center;gap:10px;background:#edf2e8;border:1px solid #b9c9aa;border-radius:8px;color:#314e3d;padding:13px 14px;margin-bottom:14px;line-height:1.6;font-size:17px}.milestone-note .icon{flex:none}
+.pocket-next{font-size:12px;line-height:1.6;color:var(--muted);margin:7px 0 11px;overflow-wrap:anywhere}

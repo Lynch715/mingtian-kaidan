@@ -1,4 +1,5 @@
 // 第一章的补充故事；保留原有触发、数值和存档记录。
+import {LEADS} from './data.js?v=pace-release-4';
 export const EXTRA_EVENTS = [
  {
   "id": "x-wu",
@@ -374,7 +375,7 @@ export function extraStoryFor(s,original){
  }
  if(event.id==='x-lin'&&d){
   if(d.choice===0){
-   event.body='小满说姐姐把账重新算过了，也听明白了后续安排。昨天那通电话，终于没再停在“以后再说”。\n“她有个朋友想咨询，已经同意被联系。我姐自己的事我接着办，朋友这边你愿意接吗？”小满问。';
+   event.body='小满说姐姐把账重新算过了，也听明白了后续安排。前几天那通电话，终于没再停在“以后再说”。\n“她有个朋友想咨询，已经同意被联系。我姐自己的事我接着办，朋友这边你愿意接吗？”小满问。';
    event.choices[0].label='先确认同意联系，再接朋友的咨询';
    event.choices[0].text='小满另行确认那位朋友愿意咨询，也问了方便联系的时间。姐姐这边仍由她继续服务，分工说清了，新的联系再按对方的意愿开始。';
    event.choices[1].label='先不接新咨询，让小满自己安排';
@@ -387,6 +388,10 @@ export function extraStoryFor(s,original){
    event.choices[1].text='你示意小满先别急着解释。她听完姐姐担心什么，再把核实后的内容说清，约好后续由自己回复。这通电话没有再留到明天。';
   }
  }
+ if(LEADS.every(p=>s.clients.some(c=>c.id===p.id))){
+  if(event.id==='x-plan'&&d?.choice===0){event.body='主管翻到你前十天填的表，旁边是现在的客户记录：“报的和办下来的接得上，这样我不用挨个追问。”\n本月安排的咨询你都已接到，他把其中一页递过来，请你说说后来是怎么跟完的。';event.choices[0].label='拿这位客户的实际记录说明';event.choices[0].text='你从第一次提问讲到后来答复，主管在这份记录上签好交接确认：“这几项有下文，我知道了。”这次核对办完，没有再派一条重复的咨询。';event.choices[1].text='你拿两条联系作例子，何师傅帮你看了回复顺序。主管确认这些咨询已经有人接洽，不再重复分派。';}
+  if(event.id==='x-lin'&&d?.choice===0){event.body='小满说姐姐重新算过账，后续缴费和退出条件都问清了，也自己作了决定。\n“我已经回完电话了。”她把原来漏讲的那页夹回资料，“谢谢你那天陪我把话说开。”本月安排的咨询已有经办人，这次不用再分派。';event.choices[0].label='听她说完，确认姐姐的决定已回复';event.choices[0].text='小满把姐姐的决定和后续由谁联系说清，自己完成了答复。她把便签上的问号划掉：“这件总算办完了。”你们没有把感谢变成另一轮推销。';event.choices[1].label='让她留好答复，之后照约定联系';event.choices[1].text='她把答复和联系安排存好，确认姐姐知道之后找谁。这件事已经有了收尾，今天不再给任何人多排一通业务电话。';}
+ }
  return event;
 }
 export function resolveExtra(s,id,index){
@@ -395,8 +400,9 @@ export function resolveExtra(s,id,index){
  if(id==='x-claim-materials')Object.assign(s.extra.claim,{stage:index===0?'review':'supplement',due:s.day+(index===0?2:1)});
  if(id==='x-claim-supplement')Object.assign(s.extra.claim,{stage:'review',due:s.day+2});
  if(id==='x-claim-result')Object.assign(s.extra.claim,{stage:'closed',due:s.day});
- if(index===0&&id==='x-plan'&&decision(s,'d10')?.choice===0)return '外呼';
- if(index===0&&id==='x-lin'&&decision(s,'d21')?.choice===0)return '转介绍';
+ const remaining=LEADS.some(p=>!s.clients.some(c=>c.id===p.id));
+ if(remaining&&index===0&&id==='x-plan'&&decision(s,'d10')?.choice===0)return '外呼';
+ if(remaining&&index===0&&id==='x-lin'&&decision(s,'d21')?.choice===0)return '转介绍';
  return null;
 }
 export function claimSummary(s,client){

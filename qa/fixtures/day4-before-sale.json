@@ -1,0 +1,272 @@
+{
+  "game": "明天一定开单",
+  "version": 1,
+  "state": {
+    "version": 1,
+    "origin": "career",
+    "seed": 42,
+    "day": 4,
+    "phase": "day",
+    "ap": 6,
+    "cash": 4049,
+    "energy": 100,
+    "mood": 91,
+    "skill": 31,
+    "integrity": 88,
+    "regard": 34,
+    "community": 0,
+    "work": 2,
+    "calls": 0,
+    "visits": 1,
+    "earned": 0,
+    "spent": 151,
+    "premium": 0,
+    "selfPremium": 0,
+    "renewal": 0,
+    "daily": {},
+    "bonds": {
+      "zhou": 45,
+      "lin": 47,
+      "he": 48,
+      "qiao": 45,
+      "aunt": 70,
+      "friend": 77,
+      "wu": 45,
+      "chen": 45
+    },
+    "clients": [
+      {
+        "id": "wu",
+        "name": "吴师傅",
+        "need": "accident",
+        "budget": 900,
+        "trust": 55,
+        "ready": 3,
+        "source": "社区",
+        "facts": [
+          "他每天骑车跑配送，最担心受伤后停工。",
+          "每年能拿出的预算不到一千元。",
+          "他会认真看职业范围，不接受含糊的回答。"
+        ],
+        "opening": "“我下午还得送两趟，你先说大概多少钱。”",
+        "known": 3,
+        "stage": "talking",
+        "met": 2,
+        "lastContact": 2,
+        "offerDay": 0,
+        "unlocked": 1,
+        "notes": [
+          {
+            "day": 2,
+            "text": "你和吴师傅聊了一会儿。\n他会认真看职业范围，不接受含糊的回答。"
+          },
+          {
+            "day": 1,
+            "text": "你和吴师傅见了面。\n他每天骑车跑配送，最担心受伤后停工。\n每年能拿出的预算不到一千元。"
+          }
+        ],
+        "served": 0
+      },
+      {
+        "id": "chen",
+        "name": "陈静",
+        "need": "medical",
+        "budget": 2200,
+        "trust": 28,
+        "ready": 5,
+        "source": "外呼",
+        "facts": [
+          "她关心住院开销，想先补基础医疗保障。",
+          "一家三口还有房贷，一年预算两千出头。",
+          "她习惯拿回家讨论，需要几天比较。"
+        ],
+        "opening": "“我不是不考虑，我得知道哪些情况不能报。”",
+        "known": 0,
+        "stage": "new",
+        "met": 0,
+        "lastContact": 0,
+        "offerDay": 0,
+        "unlocked": 1,
+        "notes": [],
+        "served": 0
+      },
+      {
+        "id": "aunt",
+        "name": "陈姨",
+        "need": "accident",
+        "budget": 800,
+        "trust": 72,
+        "ready": 1,
+        "source": "亲友",
+        "family": true,
+        "facts": [
+          "她已有基本保障，不需要再买一份高保费产品。",
+          "她在帮儿子攒首付，手头比看起来紧。",
+          "她愿意听你说，主要因为你是自家孩子。"
+        ],
+        "opening": "“你坐，我把饭热一下。工作的事慢慢说。”",
+        "known": 0,
+        "stage": "new",
+        "met": 0,
+        "lastContact": 0,
+        "offerDay": 0,
+        "unlocked": 1,
+        "notes": [],
+        "served": 0
+      },
+      {
+        "id": "friend",
+        "name": "许嘉",
+        "need": "medical",
+        "budget": 2000,
+        "trust": 65,
+        "ready": 4,
+        "source": "亲友",
+        "family": true,
+        "facts": [
+          "他接自由职业项目，最近开始担心住院没有收入。",
+          "项目款还没到账，今年只能匀出两千元。",
+          "他不喜欢每次见面都聊工作，想自己做决定。"
+        ],
+        "opening": "“我先说好，今天我请面，你别跟我客气。”",
+        "known": 1,
+        "stage": "new",
+        "met": 0,
+        "lastContact": 0,
+        "offerDay": 0,
+        "unlocked": 1,
+        "notes": [],
+        "served": 0
+      }
+    ],
+    "policies": [],
+    "ledger": [
+      {
+        "day": 3,
+        "amount": -45,
+        "label": "日常餐饮与交通"
+      },
+      {
+        "day": 2,
+        "amount": -45,
+        "label": "日常餐饮与交通"
+      },
+      {
+        "day": 1,
+        "amount": -45,
+        "label": "日常餐饮与交通"
+      },
+      {
+        "day": 1,
+        "amount": -16,
+        "label": "约一次面谈"
+      }
+    ],
+    "journal": [
+      {
+        "day": 4,
+        "title": "那份还没到账的项目款",
+        "text": "许嘉说生活还撑得住，就是不敢再添固定支出。“等款到了，我再认真看看医疗那种。”",
+        "type": "life"
+      },
+      {
+        "day": 3,
+        "title": "一天结束",
+        "text": "你整理好今天的记录，放在桌角。窗外的灯一盏盏亮起来。\n餐饮与交通 −¥45",
+        "type": "night"
+      },
+      {
+        "day": 3,
+        "title": "先别急着说产品",
+        "text": "何师傅说“有五分钟”。你总算知道该从哪里开始了。",
+        "type": "life"
+      },
+      {
+        "day": 2,
+        "title": "一天结束",
+        "text": "你整理好今天的记录，放在桌角。窗外的灯一盏盏亮起来。\n餐饮与交通 −¥45",
+        "type": "night"
+      },
+      {
+        "day": 2,
+        "title": "打错的电话",
+        "text": "电话没打成，你总算放松了一点。",
+        "type": "life"
+      },
+      {
+        "day": 2,
+        "title": "聊聊近况",
+        "text": "你和吴师傅聊了一会儿。\n他会认真看职业范围，不接受含糊的回答。",
+        "type": "life"
+      },
+      {
+        "day": 2,
+        "title": "名单先写起来",
+        "text": "纸上只有几个名字。主管说有点少，你把表折起来，决定再从社区和外呼里找。",
+        "type": "life"
+      },
+      {
+        "day": 1,
+        "title": "一天结束",
+        "text": "你整理好今天的记录，放在桌角。窗外的灯一盏盏亮起来。\n餐饮与交通 −¥45",
+        "type": "night"
+      },
+      {
+        "day": 1,
+        "title": "约一次面谈",
+        "text": "你和吴师傅见了面。\n他每天骑车跑配送，最担心受伤后停工。\n每年能拿出的预算不到一千元。",
+        "type": "life"
+      },
+      {
+        "day": 1,
+        "title": "工位靠窗，窗户打不开",
+        "text": "周主管翻出一张表：本月保费目标一万元，完成后有八百元奖励；新人扶持六百元，要有二十次工作记录。佣金到账还要等确认。你把表拍了下来。",
+        "type": "life"
+      }
+    ],
+    "messages": [
+      {
+        "day": 4,
+        "person": "friend",
+        "text": "许嘉说生活还撑得住，就是不敢再添固定支出。“等款到了，我再认真看看医疗那种。”"
+      },
+      {
+        "day": 3,
+        "person": "he",
+        "text": "何师傅说“有五分钟”。你总算知道该从哪里开始了。"
+      },
+      {
+        "day": 2,
+        "person": "lin",
+        "text": "电话没打成，你总算放松了一点。"
+      },
+      {
+        "day": 2,
+        "person": "zhou",
+        "text": "纸上只有几个名字。主管说有点少，你把表折起来，决定再从社区和外呼里找。"
+      },
+      {
+        "day": 1,
+        "person": "zhou",
+        "text": "周主管翻出一张表：本月保费目标一万元，完成后有八百元奖励；新人扶持六百元，要有二十次工作记录。佣金到账还要等确认。你把表拍了下来。"
+      },
+      {
+        "day": 1,
+        "person": "lin",
+        "text": "我坐你旁边。茶水间在走廊尽头，那个白色开关别碰，按了会漏水。"
+      }
+    ],
+    "seen": [
+      "d1",
+      "d2",
+      "s1",
+      "d3",
+      "d4"
+    ],
+    "flags": [],
+    "pending": null,
+    "lastResult": null,
+    "night": null,
+    "ending": null
+  }
+}
