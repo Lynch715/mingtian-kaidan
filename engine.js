@@ -1,5 +1,5 @@
-import {freshExtra,extraEventById,extraStoryFor,nextExtraEvent,resolveExtra} from './content.js?v=pace-release-4';
-import {PRODUCTS,PEOPLE,CLIENT_SEEDS,LEADS,DAYS,SIDE_EVENTS,REFUSALS,DAY_FOCUS} from './data.js?v=pace-release-4';
+import {freshExtra,extraEventById,extraStoryFor,nextExtraEvent,resolveExtra} from './content.js?v=novice-release-5';
+import {PRODUCTS,PEOPLE,CLIENT_SEEDS,LEADS,DAYS,SIDE_EVENTS,REFUSALS,DAY_FOCUS} from './data.js?v=novice-release-5';
 export const VERSION=1;
 export const TARGET=10000;
 export const ACTIONS={
@@ -47,6 +47,7 @@ export function newGame(origin='career',seed=Date.now()>>>0){
 export function eventById(id){return [...DAYS,...SIDE_EVENTS].find(x=>x.id===id)??extraEventById(id);}
 export function storyFor(s){
  const original=eventById(s.pending);if(!original)return null;const e=extraEventById(original.id)?extraStoryFor(s,original):copy(original);
+ if(e.id==='d1'&&paced(s))delete e.choices[0].effect.regard;
  const has=id=>s.policies.some(p=>p.client===id&&p.status!=='cancelled');
  if(e.id==='d4'&&has('friend')){e.body='许嘉说项目款还要再等一周，问已经买好的保障后面怎么交费。你翻出他的保单，手边还放着一份长期储蓄的介绍。\n“最近能动的钱不多。”他又补了一句，你准备先跟他谈什么？';e.choices[0].text='你先核对他近期的支出，确认现有缴费能否承担。许嘉说这阵子不想加新的长期支出，你把情况补在了他的资料里。';}
  if(e.id==='d9'&&has('aunt')){e.body='陈姨叫你下班拿汤，她刚把给表弟凑首付的账算好。桌上也放着向你买的那份保障资料。\n她问这份之后还要注意什么，你翻开资料，准备先确认她最近的预算够不够。';e.choices[1]={label:'问她这份缴费有没有压力',effect:{bond:{aunt:5},reveal:'aunt',integrity:2},text:'陈姨说眼下能付，但不准备再增加开支。你把预算安排记好，现有这份的疑问可以接着核对。'};}
@@ -116,29 +117,56 @@ function outcome(s,before,title,text,prior){const changes=Object.keys(before).fi
  if(prior){if(!Object.values(prior.policies).some(p=>!p.self)&&s.policies.some(p=>!p.self))milestones.push('第一份客户保单，办成了');if(prior.premium<TARGET&&s.premium>=TARGET)milestones.push('本月保费达标');if(prior.work<20&&s.work>=20)milestones.push('新人扶持条件已完成');}
  if(title==='审核结果下来了')milestones.push('这次理赔协助已办结');
  s.lastResult={title,text,changes,...(prior?{details:feedbackFor(s,prior)}:{}),...(milestones.length?{milestones}:{})};log(s,title,text);return s.lastResult;}
+// These hints are derived from the current save; they never queue work or change progress.
+export function contactPreview(s,p,type){
+ const facts=Math.min(3-p.known,type==='visit'?2:1);
+ const trust=clamp(p.trust+(type==='visit'?14:9)+(s.skill>=40?3:0)-(s.mood<25?3:0))-p.trust;
+ return `${facts?'了解 '+facts+' 项资料':'核对已有资料'} · 信任 +${trust}${s.skill<100?' · 专业 +1':''}`;
+}
+export function serviceTiming(s,p){
+ if(p.lastContact===s.day)return s.day<30?`${p.name}今天已联系，明天再做${p.served?'保单回访':'首次回访'}。`:`${p.name}今天已联系，本月结束前无法再回访；未完成的记录会留在月末回顾。`;
+ return `${p.name}还没做首次回访，可以联系核对条件和服务入口。`;
+}
 export function dayBrief(s){
- const focus=DAY_FOCUS[s.day-1];let next='可以检查客户记录，或者提前收工。';
- const contactable=p=>Boolean(p)&&p.lastContact!==s.day;
+ const focus=s.premium>=TARGET?'本月已达标。先答完客户的问题、做好回访，月底会记下这些结果。':DAY_FOCUS[s.day-1];
+ const result=(next,action='',clientId='',canFinish=false)=>({title:DAYS[s.day-1].title,focus,next,action,clientId,canFinish});
+ if(s.phase==='night')return result('今天已经收工。回顾完今天的记录，就可以开始下一天。','','',true);
+ if(s.pending||s.lastResult)return result('先处理眼前的消息，回复后再安排今天的联系。');
+ if(s.phase==='ended')return result('本月已结算，可查看账目和客户记录。','','',true);
+ if(s.ap===0)return result('今天的时间用完了，可以收工结算。','','',true);
+ const possible=(type,p)=>!actionReason(s,type,p?.id);
  const candidate=p=>!paced(s)||!p.family;
- if(s.phase==='ended')next='本月已结算，可查看账目和客户记录。';
- else if(s.ap===0)next='今天的时间用完了，可以收工结算。';
- else if(s.energy<12)next='精力较低，可以先休息一格时间。';
+ const policies=s.policies.filter(p=>!p.self&&p.status!=='cancelled');
+ const services=policies.filter(p=>p.status==='complaint'||!p.serviced).sort((a,b)=>(b.status==='complaint')-(a.status==='complaint'));
+ for(const policy of services){const p=s.clients.find(c=>c.id===policy.client);if(possible('service',p))return result(`${p.name}${policy.status==='complaint'?'有保单疑问待处理':'还没做首次回访'}，可以联系核对。`,'service',p.id);}
+ const clients=s.clients.filter(p=>candidate(p)&&!['sold','closed'].includes(p.stage));
+ const ready=clients.find(p=>possible('offer',p)&&offerReadiness(s,p).ready);
+ if(ready)return result(`${ready.name}的需求、信任和考虑时间已满足，可谈具体方案。`,'offer',ready.id);
+ const talk=clients.find(p=>possible('follow',p)&&(p.known<3||p.trust<52));
+ if(talk)return result(`可以联系${talk.name}，${talk.known<3?'继续了解'+['需求','预算','顾虑'][talk.known]:'再核对顾虑，增加信任'}。`,'follow',talk.id);
+ const learn=clients.some(p=>s.skill<PRODUCTS.find(x=>x.id===p.need).skill);
+ if(learn&&possible('study'))return result('有客户需要的产品尚未达到专业要求，可以学习一次。','study');
+ if(availableLeads(s).length){if(possible('call'))return result('可以打一次电话，寻找新联系人。','call');if(possible('community'))return result('可以安排社区联系，寻找新联系人。','community');}
+ const needEnergy=services.some(policy=>s.clients.find(c=>c.id===policy.client)?.lastContact!==s.day)||clients.some(p=>p.lastContact!==s.day&&(p.known<3||p.trust<52||offerReadiness(s,p).ready))||learn||availableLeads(s).length;
+ if(s.energy<12&&needEnergy&&possible('rest'))return result('精力较低，可以先休息一格，再看客户的联系安排。','rest');
+ const due=services[0],p=due&&s.clients.find(c=>c.id===due.client);
+ let note='';
+ if(p)note=p.lastContact===s.day?serviceTiming(s,p):`${p.name}${due.status==='complaint'?'的保单疑问尚未处理':'的首次回访尚未完成'}，今天剩余时间或精力不足，可先休息后再安排。`;
  else{
-  const policies=s.policies.filter(p=>!p.self&&p.status!=='cancelled');
-  const due=policies.find(p=>p.status==='complaint'&&contactable(s.clients.find(c=>c.id===p.client)))??policies.find(p=>!p.serviced&&contactable(s.clients.find(c=>c.id===p.client)));
-  const ready=s.clients.find(p=>candidate(p)&&!['sold','closed'].includes(p.stage)&&contactable(p)&&p.known===3&&p.trust>=52&&s.day>=p.unlocked+p.ready&&s.skill>=PRODUCTS.find(x=>x.id===p.need).skill);
-  const talk=s.clients.find(p=>candidate(p)&&!['sold','closed'].includes(p.stage)&&contactable(p)&&(p.known<3||p.trust<52));
-  const waiting=s.clients.filter(p=>candidate(p)&&!['sold','closed'].includes(p.stage)&&p.known===3&&s.day<p.unlocked+p.ready).sort((a,b)=>(a.unlocked+a.ready)-(b.unlocked+b.ready))[0];
-  const learn=s.clients.some(p=>candidate(p)&&!['sold','closed'].includes(p.stage)&&s.skill<PRODUCTS.find(x=>x.id===p.need).skill);
-  if(due)next=`${s.clients.find(c=>c.id===due.client).name}${due.status==='complaint'?'有保单疑问待处理':'还没做首次回访'}，可去客户本联系。`;
-  else if(ready&&s.ap>=2&&s.cash>=10)next=`${ready.name}的需求、信任和考虑时间已满足，可谈具体方案。`;
-  else if(talk)next=`可以联系${talk.name}，${talk.known<3?'继续了解'+['需求','预算','顾虑'][talk.known]:'再核对顾虑，增加信任'}。`;
-  else if(learn&&(s.daily.study??0)<2)next='有客户需要的产品尚未达到专业要求，可以学习一次。';
- else if(paced(s)&&waiting&&!availableLeads(s).length)next=`${waiting.name}仍在考虑，最早第 ${waiting.unlocked+waiting.ready} 天确认。${leadHint(s)}。`;
-  else if(LEADS.some(p=>!s.clients.some(c=>c.id===p.id)))next=paced(s)&&!availableLeads(s).length?leadHint(s)+'，今天可准备已有客户的问题或收工。':(s.daily.call??0)<1?'可以打一次电话，寻找新联系人。':s.ap>=2&&s.cash>=12&&s.energy>=13?'可以安排社区联系，寻找新联系人。':'可以检查客户记录，或提前收工。';
-  else next='本月联系人已全部记入客户本，可以检查已有记录或收工。';
+  const waiting=clients.filter(p=>s.day<p.unlocked+p.ready).sort((a,b)=>(a.unlocked+a.ready)-(b.unlocked+b.ready))[0];
+  const contacted=clients.find(p=>p.lastContact===s.day&&(p.known<3||p.trust<52||offerReadiness(s,p).ready));
+  if(contacted)note=s.day<30?`${contacted.name}今天已联系，明天可继续${contacted.known<3?'了解资料':contacted.trust<52?'核对顾虑':'确认方案'}。`:`${contacted.name}今天已联系，本月的联系记录会留在回顾里。`;
+  else if(waiting)note=`${waiting.name}仍在考虑，最早第 ${waiting.unlocked+waiting.ready} 天确认${waiting.unlocked+waiting.ready>30?'，本月来不及确认':''}。`;
+  else if(clients.some(p=>offerReadiness(s,p).ready))note='还有方案待确认，今天剩余时间、精力或现金不足，可以查看记录后收工。';
+  if(paced(s)&&!availableLeads(s).length&&LEADS.some(p=>!s.clients.some(c=>c.id===p.id)))note+=leadHint(s)+'。';
  }
- return {title:DAYS[s.day-1].title,focus,next};
+ return result(note+'今天可以安心收工，不用把六格时间用满。','','',true);
+}
+export function tomorrowBrief(s){
+ if(s.day>=30)return '这个月的结果会列出成交、回访和仍未处理的保单。';
+ const fresh=s.clients.filter(p=>p.unlocked===s.day&&p.lastContact!==s.day&&LEADS.some(l=>l.id===p.id));
+ const next=dayBrief({...s,day:s.day+1,phase:'day',ap:6,energy:clamp(s.energy+24+s.ap*3),daily:{},pending:null,lastResult:null});
+ return (fresh.length?`明天可接洽：${fresh.map(p=>p.name).join('、')}。`:'')+'明天：'+next.next.replace('今天可以安心收工，不用把六格时间用满。','暂时没有可推进的联系，按约定等回复即可。');
 }
 function dayReview(s){
  const parts=[],d=s.daily;
@@ -164,12 +192,12 @@ export function chooseEvent(s,index){
  s.seen.push(ev.id);s.pending=null;
  let text=choice.text;
  if(ev.id==='d10'&&s.premium===0)text+=' 你还没有开单，主管让你下午先找何师傅复盘一次。';
- if(ev.id==='d20'&&s.regard>=55){const lead=unlockLead(s,'外呼');if(lead)text+=` 主管还给你留了${lead.name}的咨询线索，已经记进客户本。`;}
+ if(ev.id==='d20'&&s.regard>=55){const lead=unlockLead(s,'外呼');if(lead)text+=` 主管还给你留了${lead.name}的咨询线索，已经记进客户本${s.daily.closing?'，明天可接洽':''}。`;}
 
  if(ev.id==='d18'&&s.policies.some(p=>p.client==='aunt'&&p.status!=='cancelled'))text+=' 陈姨已经买过的那份保单，也需要你认真回访。';
  if(ev.id==='d10'&&s.flags.includes('overpromise'))message(s,'zhou','你报的预计金额我记下了，后面有变动及时告诉我。');
  const source=resolveExtra(s,ev.id,index);
- if(source){const lead=unlockLead(s,source,ev.id);if(lead)text+=` ${lead.name}的咨询已经记进客户本，之后可以找个方便的时间联系。`;}
+ if(source){const lead=unlockLead(s,source,ev.id);if(lead)text+=` ${lead.name}的咨询已经记进客户本，${s.daily.closing?'明天可接洽，今晚先把联系方式留好':'今天可以按剩余时间接洽'}。`;}
  if(extraEventById(ev.id)){const client=s.clients.find(p=>p.id===ev.person);if(client)client.notes.unshift({day:s.day,text:ev.title+'：'+text});}
  if(['d19','d22','d26'].includes(ev.id)){const client=s.clients.find(p=>p.id===ev.person);if(client)client.notes.unshift({day:s.day,text:ev.title+'：'+text});}
  outcome(s,before,ev.title,text,prior);message(s,ev.person,extraEventById(ev.id)?text:choice.text);return s.lastResult;
@@ -280,7 +308,7 @@ export function endDay(s){
  if(p.status==='complaint'&&day>=p.day+7){const client=s.clients.find(c=>c.id===p.client);cancelPolicy(s,p);client.stage='closed';changeBond(s,p.client,-12);entries.push(`${client.name}撤回保单，业绩与佣金已冲回`);message(s,p.client,'这几天一直没能说清楚，还是撤回吧。后面的手续麻烦帮我办一下。');}
  }
  if(day===30){if(s.work>=20){money(s,600,'新人扶持');entries.push('新人扶持到账 +¥600');}else entries.push('工作记录未满20次，未获得新人扶持');if(s.premium>=TARGET){money(s,800,'月度达标奖励');entries.push('月度达标奖励 +¥800');}}
- let review=dayReview(s);
+ let review=dayReview(s)+' '+tomorrowBrief(s);
  if(s.cash<0)review+=` 当前现金缺口 ¥${Math.abs(s.cash)}，已留在账本中；免费行动仍可继续。`;
  if(day===14)review+=` 明天晚间扣固定开支 ¥${s.origin==='career'?2200:1600}。`;
  s.energy=clamp(s.energy+24+(s.ap*3));s.mood=clamp(s.mood+(paced(s)?2:4));s.phase='night';
@@ -304,6 +332,14 @@ export function endingFor(s){
  else if(family<45){id='contacts';title='给亲友留一次私人联系';body=`本月保费 ¥${s.premium}。亲友关系下降得较多，生活账里能查到当前关系，客户本也保留了原来的记录。之后联系，可以先把之前的事解释好。`;}
  else{id='leave';title='第一个月做完了';body=`本月保费 ¥${s.premium}，没有达到一万元目标。本月累计 ${s.work} 次工作记录，专业 ${s.skill}/100。已完成的安排和生活支出都能在日记、账本中回看。`;}
  const epilogues=[s.bonds.lin>=65?'小满：这个月交表了，哪天去吃面？':'小满：你的资料还在原位，有东西要拿跟我说。',family>=65?'陈姨问周末来不来吃饭，许嘉发来一场球赛的时间。':family<45?'许嘉说找个时间见面，把前面的事聊一下。':'许嘉约你月底忙完再见面。',outside.length>=3?`客户本保留了 ${outside.length} 位亲友以外客户的合适成交记录。`:s.work>0?`乔姐：这个月的 ${s.work} 次工作记录收到了，资料留好。`:'乔姐：本月账目已结算，可在生活账查看。'];
+ const serviced=active.filter(p=>p.serviced),unfinished=active.filter(p=>!p.serviced);
+ body+=active.length?` ${active.length} 份客户保单中，${serviced.length} 份已完成首次回访${unfinished.length?'，'+unfinished.length+' 份尚未完成（'+unfinished.map(p=>s.clients.find(c=>c.id===p.client).name).join('、')+'）':'，没有遗漏'}。`:' 本月没有客户保单需要首次回访。';
+ if(serviced.length)epilogues.push(`乔姐：${serviced.length} 份首次回访已经核对，客户确认过的条件和服务入口都留好了。`);
+ const replies={wu:'吴师傅：职业范围和申请材料那页存好了，有问题我按你给的入口查。',chen:'陈静：免赔额那道例子这回算对了，我也给家里人看过。',xu:'徐先生：我和爱人都核对过后续缴费了，服务入口也收到了。'};
+ for(const p of serviced)if(replies[p.client])epilogues.push(replies[p.client]);
+ if(s.extra?.claim?.stage==='closed')epilogues.push('吴师傅的理赔协助已办结，审核结果和正式答复都留在客户记录里。');
+ if(s.seen.includes('d19')&&s.clients.find(p=>p.id==='wu')?.notes.some(n=>n.text.includes('这次问询已答复')))epilogues.push('吴师傅问过的搬运工作范围已经答复，他决定先维持配送。');
+ if(unfinished.length)epilogues.push('还有首次回访未完成，名单已写在上面的本月回顾里；成交记录和待办都照实保留。');
  return {id,title,body,epilogues,clean:clean.length,outside:outside.length,family,receivable:s.policies.filter(p=>!p.paid&&p.status!=='cancelled').reduce((n,p)=>n+p.commission,0)};
 }
 export function progress(s){return {target:TARGET,policies:s.policies.filter(p=>p.status!=='cancelled').length,receivable:s.policies.filter(p=>!p.paid&&p.status!=='cancelled').reduce((v,p)=>v+p.commission,0),complaints:s.policies.filter(p=>p.status==='complaint').length,service:s.policies.filter(p=>!p.self&&!p.serviced&&p.status!=='cancelled').length};}

@@ -1,5 +1,5 @@
 // 第一章的补充故事；保留原有触发、数值和存档记录。
-import {LEADS} from './data.js?v=pace-release-4';
+import {LEADS} from './data.js?v=novice-release-5';
 export const EXTRA_EVENTS = [
  {
   "id": "x-wu",
